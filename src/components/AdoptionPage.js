@@ -31,6 +31,32 @@ class AdoptionPage extends Component {
       })
   }
 
+ 
+
+  onJoinLineClick(e) {
+    e.preventDefault();
+    console.log(e.target.name.value)
+
+    let name = {Name: e.target.name.value}
+    
+    let update = this.state.people;
+    update.push(e.target.name.value)
+
+    fetch(`${config.REACT_APP_API_BASE}/people`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(name),
+    })
+
+    this.setState({
+      people: update
+    })
+
+    e.target.name.value = ''
+  }
+
   render() {
 
     let dog = this.state.dog;
@@ -76,6 +102,11 @@ class AdoptionPage extends Component {
                 )
             })}
           </ul>
+          <form onSubmit={e => this.onJoinLineClick(e)}>
+            <label for="name"></label>
+            <input id="name" placeholder='Your name eg. John Smith' required></input>
+            <button>Join the line!</button>
+          </form>
         </div>
       </div>
     )
