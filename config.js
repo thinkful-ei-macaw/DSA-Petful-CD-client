@@ -1,4 +1,3 @@
 export default {
-  API_ENDPOINT: 'https://gentle-caverns-99473.herokuapp.com/api',
-  TOKEN_KEY: 'secret',
+  REACT_APP_API_BASE: process.env.REACT_APP_API_BASE || `http://localhost:8080/api`
 }
