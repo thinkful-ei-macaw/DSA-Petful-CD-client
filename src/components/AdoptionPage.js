@@ -3,17 +3,13 @@ import React, { Component } from 'react';
 import config from '../config'
 
 class AdoptionPage extends Component {
-constructor() {
-  super()
-  this.step = 0;
-  this.type = true;
-}
-  
+
   state = {
     dog: {},
     cat: {},
     people: [],
     currentUser: null,
+    animal: true,
   }
 
   componentDidMount() {
@@ -36,62 +32,64 @@ constructor() {
       })
   }
 
-  adoptionCountdown() {
-
-    let animal
-    this.step++
-    if (this.type === true) {
-      animal = {type: 'cats'}
-    } else {
-      animal = {type: 'dogs'}
-    }
-    
-    this.type = !this.type;
-    console.log('I ran');
-
-    if (this.step === 1) {
-      fetch(`${config.REACT_APP_API_BASE}/pets`, {
+  fetchCalls(animal) {
+    fetch(`${config.REACT_APP_API_BASE}/pets`, {
       method: 'DELETE',
       headers: {
         'content-type': 'application/json',
       },
       body: JSON.stringify(animal)
     })
-    this.step++
-    }
-    
-    if (this.step === 2) {
-      fetch(`${config.REACT_APP_API_BASE}/pets`)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data)
-      this.setState({
-        dog: data[1],
-        cat: data[0],
+      .then(() => {
+        return fetch(`${config.REACT_APP_API_BASE}/pets`);
       })
-    })
-    this.step++
-    }
-    
-    if (this.step === 3) {
-      fetch(`${config.REACT_APP_API_BASE}/people`)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data)
-      this.setState({
-        people: data
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          dog: data[1],
+          cat: data[0],
+        })
+        return fetch(`${config.REACT_APP_API_BASE}/people`)
       })
-    })
-    }
-    
-    this.step = 0;
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        this.setState({
+          people: data
+        })
+      })
   }
 
-  onJoinLineClick(e) {
+  fillTheQueue() {
+    let self = this;
+    let names = [{ Name: 'Malcolm Reynolds' }, { Name: 'River Tam' }, { Name: 'Kaylee Frye' }, { Name: 'Hoban Washburne' }]
+    let count = 3;
+    let update = this.state.people;
+    update.push(names[count].Name);
+    let intervalID = setInterval(function () {
+      fetch(`${config.REACT_APP_API_BASE}/people`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(names[count]),
+      }).then(() => {
+        self.setState({
+          people: update
+        })
+        count--
+      });
+      if (count === 0) {
+        clearInterval(intervalID)
+      }
+    }, 5000);
+  };
+
+  async onJoinLineClick(e) {
     e.preventDefault();
 
-    let name = {Name: e.target.name.value}
-    
+    let name = { Name: e.target.name.value }
+    console.log(e.target.name.value)
     let update = this.state.people;
     update.push(e.target.name.value)
 
@@ -108,18 +106,34 @@ constructor() {
       currentUser: e.target.name.value,
     })
 
+    let self = this;
+
+    let intervalID = setInterval(function () {
+      let animal;
+
+      if (self.state.animal === true) {
+        animal = { type: 'cats' }
+      } else {
+        animal = { type: 'dogs' }
+      }
+
+      self.fetchCalls(animal)
+
+      self.setState({
+        animal: !self.state.animal
+      })
+      if (self.state.people[1] === self.state.currentUser) {
+        clearInterval(intervalID)
+      }
+    }, 5000)
+
     e.target.name.value = ''
 
-    this.adoptionCountdown()
   }
 
 
 
   render() {
-    if (this.state.people[0] === this.state.currentUser) {
-      clearInterval(this.intervalID)
-    }
-
     let dog = this.state.dog;
     let cat = this.state.cat;
     let people = this.state.people;
@@ -128,7 +142,7 @@ constructor() {
       <div id="pets">
         <div className='dog-info'>
           <h2>{dog.name}</h2>
-          <img src={dog.imageURL} />
+          <img src={dog.imageURL} alt={dog.description} />
           <p>{dog.description}</p>
           <ul>
             <li>{dog.gender}</li>
@@ -142,7 +156,7 @@ constructor() {
         </div>
         <div className='cat-info'>
           <h2>{cat.name}</h2>
-          <img src={cat.imageURL} />
+          <img src={cat.imageURL} alt={cat.description} />
           <p>{cat.description}</p>
           <ul>
             <li>{cat.gender}</li>
@@ -157,14 +171,14 @@ constructor() {
         <div>
           <p>If you would like to adopt a pet, please join the back of the line!</p>
           <ul>
-            {people.map(person => {
-                return (
-                  <li>{person}</li>
-                )
+            {people.map((person, idx) => {
+              return (
+                <li key={idx}>{person}</li>
+              )
             })}
           </ul>
           <form onSubmit={e => this.onJoinLineClick(e)}>
-            <label for="name"></label>
+            <label htmlFor="name"></label>
             <input id="name" placeholder='Your name eg. John Smith' required></input>
             <button>Join the line!</button>
           </form>
