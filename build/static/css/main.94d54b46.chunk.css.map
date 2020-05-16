@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,MACE,YAAY,CACZ,qBACF,CAEA,0BACE,MACE,YAAY,CACZ,kBAAmB,CACnB,4BACF,CACF","file":"main.94d54b46.chunk.css","sourcesContent":["#pets {\n  display:flex;\n  flex-direction: column;\n}\n\n@media (min-width: 1024px) {\n  #pets {\n    display:flex;\n    flex-direction: row;\n    justify-content: space-around;\n  }\n}"]}

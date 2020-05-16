@@ -23,13 +23,25 @@ class AdoptionPage extends Component {
       })
 
     fetch(`${config.REACT_APP_API_BASE}/people`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        this.setState({
-          people: data
-        })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      this.setState({
+        people: data
       })
+    })
+
+  }
+
+  updatePeople() {
+    fetch(`${config.REACT_APP_API_BASE}/people`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      this.setState({
+        people: data
+      })
+    })
   }
 
   fetchCalls(animal) {
@@ -72,12 +84,9 @@ class AdoptionPage extends Component {
         headers: {
           'content-type': 'application/json',
         },
-        body: JSON.stringify(names[count]),
+        body: JSON.stringify(names[count--]),
       }).then(() => {
-        self.setState({
-          people: update
-        })
-        count--
+        this.updatePeople()
       });
       if (count === 0) {
         clearInterval(intervalID)
