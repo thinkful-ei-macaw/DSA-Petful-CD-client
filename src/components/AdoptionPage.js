@@ -22,18 +22,11 @@ class AdoptionPage extends Component {
         })
       })
 
-    fetch(`${config.REACT_APP_API_BASE}/people`)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data)
-      this.setState({
-        people: data
-      })
-    })
+    this.updatePeople()
 
   }
 
-  updatePeople() {
+  updatePeople = () => {
     fetch(`${config.REACT_APP_API_BASE}/people`)
     .then(res => res.json())
     .then(data => {
@@ -86,7 +79,7 @@ class AdoptionPage extends Component {
         },
         body: JSON.stringify(names[count--]),
       }).then(() => {
-        this.updatePeople()
+        self.updatePeople()
       });
       if (count === 0) {
         clearInterval(intervalID)
