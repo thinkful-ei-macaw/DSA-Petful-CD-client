@@ -85,7 +85,7 @@ class AdoptionPage extends Component {
     }, 5000);
   };
 
-  async onJoinLineClick(e) {
+  onJoinLineClick(e) {
     e.preventDefault();
 
     let name = { Name: e.target.name.value }
@@ -137,6 +137,10 @@ class AdoptionPage extends Component {
     let dog = this.state.dog;
     let cat = this.state.cat;
     let people = this.state.people;
+
+    if(people[0] === this.state.currentUser && people.length === 1){
+      this.fillTheQueue();
+    }
 
     return (
       <div id="pets">
