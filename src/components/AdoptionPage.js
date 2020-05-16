@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+
 import config from '../config'
 
 class AdoptionPage extends Component {
-
+constructor() {
+  super()
+  this.step = 0;
+  this.type = true;
+}
+  
   state = {
     dog: {},
     cat: {},
@@ -31,11 +36,59 @@ class AdoptionPage extends Component {
       })
   }
 
- 
+  adoptionCountdown() {
+
+    let animal
+    this.step++
+    if (this.type === true) {
+      animal = {type: 'cats'}
+    } else {
+      animal = {type: 'dogs'}
+    }
+    
+    this.type = !this.type;
+    console.log('I ran');
+
+    if (this.step === 1) {
+      fetch(`${config.REACT_APP_API_BASE}/pets`, {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(animal)
+    })
+    this.step++
+    }
+    
+    if (this.step === 2) {
+      fetch(`${config.REACT_APP_API_BASE}/pets`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      this.setState({
+        dog: data[1],
+        cat: data[0],
+      })
+    })
+    this.step++
+    }
+    
+    if (this.step === 3) {
+      fetch(`${config.REACT_APP_API_BASE}/people`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      this.setState({
+        people: data
+      })
+    })
+    }
+    
+    this.step = 0;
+  }
 
   onJoinLineClick(e) {
     e.preventDefault();
-    console.log(e.target.name.value)
 
     let name = {Name: e.target.name.value}
     
@@ -51,13 +104,21 @@ class AdoptionPage extends Component {
     })
 
     this.setState({
-      people: update
+      people: update,
+      currentUser: e.target.name.value,
     })
 
     e.target.name.value = ''
+
+    this.adoptionCountdown()
   }
 
+
+
   render() {
+    if (this.state.people[0] === this.state.currentUser) {
+      clearInterval(this.intervalID)
+    }
 
     let dog = this.state.dog;
     let cat = this.state.cat;
