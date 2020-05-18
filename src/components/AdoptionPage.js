@@ -37,6 +37,14 @@ class AdoptionPage extends Component {
     })
   }
 
+  adoptThePet(e) {
+    e.preventDefault();
+
+    let type = {type: e.target.id}
+    
+    this.fetchCalls(type)
+  }
+
   fetchCalls(animal) {
     fetch(`${config.REACT_APP_API_BASE}/pets`, {
       method: 'DELETE',
@@ -81,7 +89,7 @@ class AdoptionPage extends Component {
       }).then(() => {
         self.updatePeople()
       });
-      if (count === 0) {
+      if (self.state.people.length === 4) {
         clearInterval(intervalID)
       }
     }, 5000);
@@ -157,7 +165,7 @@ class AdoptionPage extends Component {
           </ul>
           <p>{dog.story}</p>
           {this.state.currentUser && this.state.currentUser === people[0] && <form id='dog'>
-            <button>Adopt Me!</button>
+            <button id="dogs" onClick={e => this.adoptThePet(e)}>Adopt Me!</button>
           </form>}
         </div>
         <div className='cat-info'>
@@ -171,10 +179,10 @@ class AdoptionPage extends Component {
           </ul>
           <p>{cat.story}</p>
           {this.state.currentUser && this.state.currentUser === people[0] && <form id='cat'>
-            <button>Adopt Me!</button>
+            <button id="cats" onClick={e => this.adoptThePet(e)}>Adopt Me!</button>
           </form>}
         </div>
-        <div>
+        <div className="form">
           <p>If you would like to adopt a pet, please join the back of the line!</p>
           <ul>
             {people.map((person, idx) => {
