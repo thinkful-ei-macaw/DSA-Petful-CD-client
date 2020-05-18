@@ -43,6 +43,7 @@ class AdoptionPage extends Component {
     let type = {type: e.target.id}
     
     this.fetchCalls(type)
+    alert('Congratulations! You have adopted a new pet!')
   }
 
   fetchCalls(animal) {
