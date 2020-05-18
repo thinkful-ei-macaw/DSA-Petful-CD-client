@@ -90,7 +90,7 @@ class AdoptionPage extends Component {
       }).then(() => {
         self.updatePeople()
       });
-      if (self.state.people.length === 4) {
+      if (count === -1) {
         clearInterval(intervalID)
       }
     }, 5000);
